@@ -5,17 +5,14 @@
 
 #define target_position_x 80
 #define target_position_y 123
-#define min_area 10
 
 ros::NodeHandle nh;
 std_msgs::Int16 nor_msg;
 geometry_msgs::Point32 dist_msg;
 ros::Publisher chatter("distance_left", &dist_msg);
-//ros::Publisher speaker("normal", &nor_msg);
 Pixy2 pixy;
 
 int color = 1;
-int i = 0;
 unsigned long long pre_t;
 
 
@@ -38,33 +35,19 @@ void setup()
 //
 void loop()
 {
-  
 
   nh.spinOnce();
 
-  pixy.ccc.getBlocks();
+  pixy.ccc.getBlocks(false,color,1);
 
   if (pixy.ccc.numBlocks){
-    for (i = 0; i < pixy.ccc.getBlocks(); ++i){
-      if (pixy.ccc.blocks[i].m_signature == color){
-        if(pixy.ccc.blocks[i].m_width*pixy.ccc.blocks[i].m_height > min_area){
-          dist_msg.x = (int32_t)pixy.ccc.blocks[i].m_y - target_position_y;
-          //dist_msg.x = (int32_t)pixy.ccc.blocks[i].m_width*(int32_t)pixy.ccc.blocks[i].m_height;
-          dist_msg.y = (int32_t)pixy.ccc.blocks[i].m_x - target_position_x;
-          dist_msg.z = i + color * 10 + pixy.ccc.getBlocks() * 100;
-
-
-        if (millis() - pre_t > 100) {
-          chatter.publish(&dist_msg);
-          pre_t = millis();
-        }
-
-        /*if (target_position_x - pixy.ccc.blocks[i].m_x < 10 && target_position_y - pixy.ccc.blocks[i].m_y < 10) {
-          nor_msg.data = ok;
-          speaker.publish(&nor_msg);
-          }*/
-       }
-      }
+    dist_msg.x = (int32_t)pixy.ccc.blocks[0].m_y - target_position_y;
+    dist_msg.y = (int32_t)pixy.ccc.blocks[0].m_x - target_position_x;
+    dist_msg.z = color;
+     
+     if(millis() - pre_t > 100) {
+      chatter.publish(&dist_msg);
+      pre_t = millis();
     }
-  }
+  } 
 }
