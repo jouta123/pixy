@@ -5,6 +5,7 @@
 
 #define target_position_x 234
 #define target_position_y 108
+#define min_area 10
 
 ros::NodeHandle nh;
 std_msgs::Int16 nor_msg;
@@ -45,9 +46,10 @@ void loop()
   {
     for (i = 0; i < pixy.ccc.getBlocks(); ++i) {
       if (pixy.ccc.blocks[i].m_signature == color) {
-        dist_msg.x = -(pixy.ccc.blocks[i].m_y-target_position_y);
-        dist_msg.y = -(pixy.ccc.blocks[i].m_x-target_position_x);
-        dist_msg.z = i + color * 10 + pixy.ccc.getBlocks() * 100;
+        if(pixy.ccc.blocks[i].m_width*pixy.ccc.blocks[i].m_height >= min_area){
+          dist_msg.x = -((int32_t)pixy.ccc.blocks[i].m_y - target_position_y);
+          dist_msg.y = -((int32_t)pixy.ccc.blocks[i].m_x - target_position_x);
+          dist_msg.z = i + color * 10 + pixy.ccc.getBlocks() * 100;
 
 
         if (millis() - pre_t > 100) {
@@ -59,6 +61,7 @@ void loop()
           nor_msg.data = ok;
           speaker.publish(&nor_msg);
         }*/
+        }
       }
     }
   }
