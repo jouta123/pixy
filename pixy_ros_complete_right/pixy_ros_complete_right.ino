@@ -14,7 +14,7 @@ ros::Publisher chatter("distance_right", &dist_msg);
 //ros::Publisher speaker("normal", &nor_msg);
 Pixy2 pixy;
 
-int color = 0;
+int color = 1;
 int i = 0;
 unsigned long long pre_t;
 
